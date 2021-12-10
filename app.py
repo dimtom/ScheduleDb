@@ -16,3 +16,8 @@ def handler_help():
 @app.route("/login")
 def handler_login():
     return "<p>This is login page</p>"
+
+
+@app.route("/logout")
+def handler_logout():
+    return "<p>This is logout page</p>"
