@@ -13,10 +13,7 @@ schedules.load_all_schedules(data_directory)
 
 @app.route("/")
 def handler_main():
-    '''
-    TODO: output standard help index.html
-    '''
-    return "<p>Hello, world!</p>"
+    return flask.render_template("index.html", base_url=flask.request.base_url)
 
 
 @app.route("/schedule", methods=['GET'])
