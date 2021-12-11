@@ -1,23 +1,57 @@
 import flask
+import os
+import schedules
 
+
+# create a new flask application
 app = flask.Flask(__name__)
+
+# initialization: load all schedules to dictionary
+data_directory = os.path.join(app.root_path, 'data')
+schedules.load_all_schedules(data_directory)
 
 
 @app.route("/")
 def handler_main():
+    '''
+    TODO: output standard help index.html
+    '''
     return "<p>Hello, world!</p>"
 
 
-@app.route("/help")
-def handler_help():
-    return "<p>This is help page</p>"
+@app.route("/schedule", methods=['GET'])
+def handler_allSchedules():
+    ids = [id for id in schedules.all_schedules.keys()]
+    response = {"schedules": ids}
+    return response
 
 
-@app.route("/login")
-def handler_login():
-    return "<p>This is login page</p>"
+@app.route("/schedule/<id>", methods=['GET'])
+def handler_getSchedule(id):
+    if id in schedules.all_schedules:
+        return schedules.all_schedules[id]
+    else:
+        flask.abort(404)
 
 
-@app.route("/logout")
-def handler_logout():
-    return "<p>This is logout page</p>"
+'''
+TODO: add in future
+'''
+
+'''
+@app.route("/find")
+def handler_search():
+    # request.args:
+    # request.get_json()
+    response = flask.make_response()
+    return response, 400  # bad request
+
+
+@app.route("/schedule/upload", methods=['POST'])
+def handler_uploadSchedule():
+    # @app.route('/upload', methods=['GET', 'POST'])
+    # f = request.files['the_file']
+    # f.save('/var/www/uploads/uploaded_file.txt')
+    response = flask.make_response()
+    return response, 501  # not implemented
+'''
