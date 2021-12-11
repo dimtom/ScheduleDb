@@ -16,6 +16,12 @@ def handler_main():
     return flask.render_template("index.html", base_url=flask.request.base_url)
 
 
+@app.route("/health", methods=['GET'])
+def handler_health():
+    response = flask.make_response("Health status: OK")
+    return response, 200
+
+
 @app.route("/schedule", methods=['GET'])
 def handler_allSchedules():
     ids = [id for id in schedules.all_schedules.keys()]
