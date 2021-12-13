@@ -8,7 +8,7 @@ app = flask.Flask(__name__)
 
 # initialization: load all schedules to dictionary
 data_directory = os.path.join(app.root_path, 'data')
-schedules.load_all_schedules(data_directory)
+schedules.all_schedules = schedules.loadAllSchedules(data_directory)
 
 
 @app.route("/")
@@ -24,7 +24,8 @@ def handler_health():
 
 @app.route("/schedule", methods=['GET'])
 def handler_allSchedules():
-    ids = [id for id in schedules.all_schedules.keys()]
+    ids = schedules.findAllSchedules()
+
     response = {"schedules": ids}
     return response
 
@@ -37,19 +38,27 @@ def handler_getSchedule(id):
         flask.abort(404)
 
 
-'''
-TODO: add in future
-'''
-
-'''
 @app.route("/find")
-def handler_search():
-    # request.args:
-    # request.get_json()
-    response = flask.make_response()
-    return response, 400  # bad request
+def handler_find():
+    numPlayers = flask.request.args.get("players", 0)
+    numTables = flask.request.args.get("tables", 0)
+    numAttempts = flask.request.args.get("distance", 0)
+
+    try:
+        configuration = {
+            "numPlayers": int(numPlayers),
+            "numTables": int(numTables),
+            "numAttempts": int(numAttempts)
+        }
+    except ValueError:
+        flask.abort(400)
+
+    ids = schedules.findSchedules(configuration)
+    response = {"schedules": ids}
+    return response
 
 
+'''
 @app.route("/schedule/upload", methods=['POST'])
 def handler_uploadSchedule():
     # @app.route('/upload', methods=['GET', 'POST'])
