@@ -32,10 +32,27 @@ def handler_allSchedules():
 
 @app.route("/schedule/<id>", methods=['GET'])
 def handler_getSchedule(id):
-    if id in schedules.all_schedules:
-        return schedules.all_schedules[id]
-    else:
+    if id not in schedules.all_schedules:
         flask.abort(404)
+        return
+
+    mode = flask.request.args.get("mode", "json")
+    mode = mode.lower()
+
+    response = None
+    if mode == "json":
+        response = flask.make_response(schedules.getJsonSchedule(id), 200)
+        response.mimetype = "application/json"
+    elif mode == "mwt":
+        response = flask.make_response(schedules.getMwtSchedule(id), 200)
+        response.mimetype = "text/plain"
+    elif mode == "log":
+        response = flask.make_response(schedules.getLogSchedule(id), 200)
+        response.mimetype = "text/plain"
+    else:
+        flask.abort(
+            400, "Invalid mode value. Valid values are: json | mwt | log.")
+    return response
 
 
 @app.route("/find")
